@@ -41,4 +41,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function pagosMensuales()
+    {
+        return $this->hasMany(ReciboPago::class, 'cedula', 'cedula');
+    }
+    public function registrosHoras()
+    {
+        return $this->hasMany(HoraTrabajo::class, 'cedula', 'cedula');
+    }
+
 }
