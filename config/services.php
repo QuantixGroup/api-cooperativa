@@ -14,6 +14,11 @@ return [
     |
     */
 
+    'usuarios' => [
+        'me' => env('USUARIOS_API_ME'),
+    ],
+
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
