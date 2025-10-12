@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HoraTrabajoController;
 use App\Http\Controllers\ComprobantePagoController;
+use App\Http\Middleware\AutenticacionDesdeApiUsuarios;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +20,8 @@ use App\Http\Controllers\ComprobantePagoController;
 |
 */
 
-Route::middleware('auth.usuarios')->group(function () {
+Route::middleware([AutenticacionDesdeApiUsuarios::class])->group(function () {
+
 
     Route::post('/horas', [HoraTrabajoController::class, 'InsertarHoras']);
     Route::post('/comprobantes', [ComprobantePagoController::class, 'InsertarComprobante']);

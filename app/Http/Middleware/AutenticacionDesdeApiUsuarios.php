@@ -18,8 +18,8 @@ class AutenticacionDesdeApiUsuarios
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->header('Authorization');
-        if($token == null)
-            return response(["error" => "Not authenticated"],401);
+        if ($token == null)
+            return response(["error" => "Not authenticated"], 401);
 
         $validacion = Http::withHeaders([
             'Authorization' => $token,
@@ -27,9 +27,10 @@ class AutenticacionDesdeApiUsuarios
             'Content-Type' => 'application/json'
         ])->get(getenv("API_AUTH_URL") . '/api/validate');
 
-        if($validacion->status() != 200)
-            return response(["error" => "Invalid Token"],401);
+        if ($validacion->status() != 200)
+            return response(["error" => "Invalid Token"], 401);
 
-        $request -> merge(['user' => $validacion->json()]);
+        $request->merge(['user' => $validacion->json()]);
         return $next($request);
-    }}
+    }
+}
