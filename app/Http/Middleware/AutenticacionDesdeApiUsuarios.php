@@ -17,22 +17,20 @@ class AutenticacionDesdeApiUsuarios
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->bearerToken();
-        if (!$token) {
-            return response()->json(['mensaje' => 'Falta el token de acceso'], 401);
-        }
+        $token = $request->header('Authorization');
+        if ($token == null)
+            return response(["error" => "Not authenticated"], 401);
 
-        $url = config('services.usuarios.me'); 
-        $response = Http::withToken($token)->acceptJson()->get($url);
+        $validacion = Http::withHeaders([
+            'Authorization' => $token,
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ])->get(getenv("API_AUTH_URL") . '/api/validate');
 
-        if (!$response->ok()) {
-            return response()->json(['mensaje' => 'Token inválido o vencido'], 401);
-        }
+        if ($validacion->status() != 200)
+            return response(["error" => "Invalid Token"], 401);
 
-        $usuario = $response->json(); 
-        $request->attributes->set('id_usuario_autenticado', $usuario['id'] ?? null);
-        $request->attributes->set('cedula_usuario_autenticado', $usuario['cedula'] ?? null);
-
+        $request->merge(['user' => $validacion->json()]);
         return $next($request);
     }
 }
