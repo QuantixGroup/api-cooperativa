@@ -22,8 +22,11 @@ use App\Http\Middleware\AutenticacionDesdeApiUsuarios;
 
 Route::middleware([AutenticacionDesdeApiUsuarios::class])->group(function () {
 
-
-    Route::post('/horas', [HoraTrabajoController::class, 'InsertarHoras']);
+    Route::get('/horas', [HoraTrabajoController::class, 'ObtenerHoras']);
+    Route::post('/horas/registro', [HoraTrabajoController::class, 'InsertarHoras']);
     Route::post('/comprobantes', [ComprobantePagoController::class, 'InsertarComprobante']);
 });
+
+Route::get('/recibos/{cedula}', [ComprobantePagoController::class, 'ObtenerRecibosPorCedula']);
+Route::put('/recibos/{idPago}', [ComprobantePagoController::class, 'ActualizarEstadoRecibo']);
 
