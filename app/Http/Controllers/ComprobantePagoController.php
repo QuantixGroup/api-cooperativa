@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\ComprobantePago;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ComprobantePagoController extends Controller
 {
@@ -47,21 +46,13 @@ class ComprobantePagoController extends Controller
     public function ObtenerRecibosPorCedula($cedula)
     {
         try {
-            Log::info("Consultando recibos para cédula: {$cedula}");
-
             $recibos = ComprobantePago::where('cedula', $cedula)
                 ->orderBy('created_at', 'desc')
                 ->get();
 
-            Log::info("Recibos encontrados", [
-                'cedula' => $cedula,
-                'count' => $recibos->count()
-            ]);
-
             return response()->json($recibos, 200);
 
         } catch (\Exception $e) {
-            Log::error("Error al obtener recibos: " . $e->getMessage());
             return response()->json([
                 'message' => 'Error al obtener recibos',
                 'error' => $e->getMessage()
@@ -76,10 +67,6 @@ class ComprobantePagoController extends Controller
                 'estado' => 'required|in:pendiente,aceptado,rechazado'
             ]);
 
-            Log::info("Actualizando estado de recibo", [
-                'id_pago' => $idPago,
-                'nuevo_estado' => $request->estado
-            ]);
 
             $recibo = ComprobantePago::find($idPago);
 
@@ -93,10 +80,6 @@ class ComprobantePagoController extends Controller
             $recibo->estado = $request->estado;
             $recibo->save();
 
-            Log::info("Estado actualizado correctamente", [
-                'id_pago' => $idPago,
-                'nuevo_estado' => $request->estado
-            ]);
 
             return response()->json([
                 'success' => true,
@@ -105,7 +88,6 @@ class ComprobantePagoController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
-            Log::error("Error al actualizar estado: " . $e->getMessage());
             return response()->json([
                 'success' => false,
                 'message' => 'Error al actualizar el estado',
