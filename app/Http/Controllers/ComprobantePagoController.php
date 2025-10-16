@@ -54,8 +54,7 @@ class ComprobantePagoController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error al obtener recibos',
-                'error' => $e->getMessage()
+                'message' => 'Error al obtener recibos'
             ], 500);
         }
     }
@@ -64,9 +63,9 @@ class ComprobantePagoController extends Controller
     {
         try {
             $request->validate([
-                'estado' => 'required|in:pendiente,aceptado,rechazado'
+                'estado' => 'required|in:pendiente,aceptado,rechazado',
+                'observacion' => 'nullable|string|max:1000'
             ]);
-
 
             $recibo = ComprobantePago::find($idPago);
 
@@ -78,8 +77,12 @@ class ComprobantePagoController extends Controller
             }
 
             $recibo->estado = $request->estado;
-            $recibo->save();
 
+            if ($request->has('observacion')) {
+                $recibo->observacion = $request->observacion;
+            }
+
+            $recibo->save();
 
             return response()->json([
                 'success' => true,
@@ -90,8 +93,48 @@ class ComprobantePagoController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al actualizar el estado',
-                'error' => $e->getMessage()
+                'message' => 'Error al actualizar el estado'
+            ], 500);
+        }
+    }
+
+    public function ObtenerPdfRecibo($idPago)
+    {
+        try {
+            $recibo = ComprobantePago::find($idPago);
+
+            if (!$recibo) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Recibo no encontrado'
+                ], 404);
+            }
+
+            if (!$recibo->archivo_comprobante) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El recibo no tiene un archivo PDF asociado'
+                ], 404);
+            }
+
+            $rutaCompleta = storage_path('app/public/' . $recibo->archivo_comprobante);
+
+            if (!file_exists($rutaCompleta)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Archivo PDF no encontrado'
+                ], 404);
+            }
+
+            return response()->file($rutaCompleta, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'inline; filename="recibo_' . $idPago . '.pdf"'
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener el PDF'
             ], 500);
         }
     }

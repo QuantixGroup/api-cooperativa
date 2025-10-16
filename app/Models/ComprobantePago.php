@@ -17,7 +17,8 @@ class ComprobantePago extends Model
         'archivo_comprobante',
         'estado',
         'mes',
-        'anio'
+        'anio',
+        'observacion'
     ];
 
     protected $casts = [

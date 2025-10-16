@@ -29,4 +29,5 @@ Route::middleware([AutenticacionDesdeApiUsuarios::class])->group(function () {
 
 Route::get('/recibos/{cedula}', [ComprobantePagoController::class, 'ObtenerRecibosPorCedula']);
 Route::put('/recibos/{idPago}', [ComprobantePagoController::class, 'ActualizarEstadoRecibo']);
+Route::get('/recibos/{idPago}/pdf', [ComprobantePagoController::class, 'ObtenerPdfRecibo']);
 
