@@ -25,6 +25,7 @@ jobs:
           php-version: 8.2
           tools: composer:v2
           coverage: xdebug
+          extensions: sqlite
 
       - name: Add Flux Credentials Loaded From ENV
         run: |
