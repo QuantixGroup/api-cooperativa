@@ -26,8 +26,10 @@ jobs:
           php-version: "8.2"
 
       - name: Add Flux Credentials Loaded From ENV
-        if: ${{ secrets.FLUX_USERNAME && secrets.FLUX_LICENSE_KEY }}
-        run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
+        run: |
+          if [ -n "${{ secrets.FLUX_USERNAME }}" ] && [ -n "${{ secrets.FLUX_LICENSE_KEY }}" ]; then
+            composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
+          fi
 
       - name: Force Composer platform PHP to 8.2
         run: composer config platform.php 8.2
