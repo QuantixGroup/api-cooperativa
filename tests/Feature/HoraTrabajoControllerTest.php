@@ -19,9 +19,13 @@ test('insertar horas crea un registro y devuelve 201', function () {
     $payload = ['fecha' => '2025-02-01', 'conteo_de_horas' => 4];
     $request = Request::create('/', 'POST', $payload);
     $request->attributes->set('cedula', 222333444);
-    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    }
     $response = $controller->InsertarHoras($request);
-    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
 
     expect($response->status())->toBe(201);
 
@@ -32,7 +36,9 @@ test('insertar horas crea un registro y devuelve 201', function () {
 });
 
 test('no permite duplicados de horas el mismo dia/tipo', function () {
-    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    }
     HoraTrabajo::create([
         'cedula' => 333222111,
         'fecha' => '2025-03-01',
@@ -41,7 +47,9 @@ test('no permite duplicados de horas el mismo dia/tipo', function () {
         'estado' => 'pendiente'
     ]);
 
-    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
 
     $controller = new HoraTrabajoController();
     $request = Request::create('/', 'POST', ['fecha' => '2025-03-01', 'conteo_de_horas' => 2]);

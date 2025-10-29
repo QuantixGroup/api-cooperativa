@@ -47,8 +47,10 @@ jobs:
 
       - name: Force SQLite for testing
         run: |
-          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
-          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=:memory:/' .env
+          grep -v '^DB_CONNECTION=' .env | grep -v '^DB_DATABASE=' > .env.tmp
+          mv .env.tmp .env
+          echo "DB_CONNECTION=sqlite" >> .env
+          echo "DB_DATABASE=:memory:" >> .env
 
       - name: Show .env for debug
         run: cat .env
@@ -56,5 +58,10 @@ jobs:
       - name: Clear config cache
         run: php artisan config:clear
 
+      - name: Ensure database/migrations exist and list them
+        run: |
+          mkdir -p database/migrations
+          echo "Listing database/migrations contents:" 
+          ls -la database/migrations || true
       - name: Run Tests
         run: ./vendor/bin/pest

@@ -18,9 +18,13 @@ test('insertar comprobante crea registro y devuelve 201', function () {
     $controller = new ComprobantePagoController();
     $request = Request::create('/', 'POST', ['monto' => 1500, 'fecha_comprobante' => '2025-01-02']);
     $request->attributes->set('cedula', 123456789);
-    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    }
     $response = $controller->InsertarComprobante($request);
-    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
     expect($response->status())->toBe(201);
     $data = $response->getData();
     expect($data->success)->toBeTrue();
@@ -28,7 +32,9 @@ test('insertar comprobante crea registro y devuelve 201', function () {
 });
 
 test('obtener recibos por cedula devuelve lista', function () {
-    DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+    }
     ComprobantePago::create([
         'cedula' => 111111111,
         'monto' => 1000,
@@ -49,7 +55,9 @@ test('obtener recibos por cedula devuelve lista', function () {
         'anio' => 2025
     ]);
 
-    DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    if (DB::getDriverName() === 'mysql') {
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+    }
 
     $controller = new ComprobantePagoController();
 
