@@ -49,5 +49,11 @@ jobs:
           sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
           sed -i 's/^DB_DATABASE=.*/DB_DATABASE=:memory:/' .env
 
+      - name: Show .env for debug
+        run: cat .env
+
+      - name: Clear config cache
+        run: php artisan config:clear
+
       - name: Run Tests
         run: ./vendor/bin/pest
