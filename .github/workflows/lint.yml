@@ -26,6 +26,7 @@ jobs:
           php-version: "8.2"
 
       - name: Add Flux Credentials Loaded From ENV
+        if: ${{ secrets.FLUX_USERNAME && secrets.FLUX_LICENSE_KEY }}
         run: composer config http-basic.composer.fluxui.dev "${{ secrets.FLUX_USERNAME }}" "${{ secrets.FLUX_LICENSE_KEY }}"
 
       - name: Force Composer platform PHP to 8.2
@@ -34,7 +35,12 @@ jobs:
       - name: Install Dependencies
         run: |
           composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-          npm install
+
+      - name: Install Pint if missing
+        run: |
+          if [ ! -f vendor/bin/pint ]; then
+            composer require laravel/pint --dev --no-interaction --no-scripts --no-progress
+          fi
 
       - name: Run Pint
         run: vendor/bin/pint
