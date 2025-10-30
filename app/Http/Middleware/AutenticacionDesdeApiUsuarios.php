@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 
 class AutenticacionDesdeApiUsuarios
@@ -17,24 +18,51 @@ class AutenticacionDesdeApiUsuarios
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $token = $request->header('Authorization');
-        if ($token == null)
-            return response(["error" => "Not authenticated"], 401);
-
-        $apiAuthUrl = env("API_AUTH_URL");
-
-        $validacion = Http::withHeaders([
-            'Authorization' => $token,
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
-        ])->get($apiAuthUrl . '/api/validate');
-        if ($validacion->status() != 200) {
-            return response(["error" => "Invalid Token", "status" => $validacion->status()], 401);
+        $authorizationHeader = $request->header('Authorization');
+        if (empty($authorizationHeader)) {
+            return response()->json(['error' => 'Not authenticated'], 401);
         }
-        $userData = $validacion->json();
-        $request->merge(['user' => $userData]);
 
-        if (isset($userData['cedula'])) {
+        $token = preg_replace('/^Bearer\s+/i', '', trim($authorizationHeader));
+        if (empty($token)) {
+            return response()->json(['error' => 'Not authenticated'], 401);
+        }
+
+        $apiAuthUrl = env('API_AUTH_URL');
+        if (empty($apiAuthUrl)) {
+            Log::error('AutenticacionDesdeApiUsuarios: API_AUTH_URL no está configurada');
+            return response()->json(['error' => 'Authentication service not configured'], 500);
+        }
+        $parsed = parse_url($apiAuthUrl);
+        if (!isset($parsed['scheme'])) {
+            $apiAuthUrl = 'http://' . ltrim($apiAuthUrl, '/');
+        }
+
+        $validateUrl = rtrim($apiAuthUrl, '/') . '/api/validate';
+
+        try {
+            $validacion = Http::withHeaders([
+                'Accept' => 'application/json',
+            ])->withToken($token)->timeout(5)->get($validateUrl);
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::error('AutenticacionDesdeApiUsuarios: fallo de conexión a API de usuarios', ['url' => $validateUrl, 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Unable to contact authentication server'], 503);
+        } catch (\Throwable $e) {
+            Log::error('AutenticacionDesdeApiUsuarios: excepción al validar token', ['url' => $validateUrl, 'exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Authentication validation error'], 500);
+        }
+
+        if (!$validacion->successful()) {
+            $status = $validacion->status() ?: 401;
+            $body = $validacion->json();
+            $message = is_array($body) && isset($body['error']) ? $body['error'] : 'Invalid token';
+            return response()->json(['error' => $message, 'status' => $status], $status == 200 ? 401 : $status);
+        }
+
+        $userData = $validacion->json();
+        $request->attributes->set('user', $userData);
+
+        if (is_array($userData) && isset($userData['cedula'])) {
             $request->attributes->set('cedula', $userData['cedula']);
         }
 
