@@ -3,7 +3,7 @@
 use App\Models\User;
 
 test('Model User tiene atributos fillable esperados', function () {
-    $user = new User();
+    $user = new User;
 
     $fillable = $user->getFillable();
 

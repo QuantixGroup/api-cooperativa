@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -44,11 +43,11 @@ class User extends Authenticatable
 
     public function pagosMensuales()
     {
-        return $this->hasMany(ReciboPago::class, 'cedula', 'cedula');
+        return $this->hasMany(ComprobantePago::class, 'cedula', 'cedula');
     }
+
     public function registrosHoras()
     {
         return $this->hasMany(HoraTrabajo::class, 'cedula', 'cedula');
     }
-
 }

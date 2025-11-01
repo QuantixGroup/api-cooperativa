@@ -3,7 +3,7 @@
 use App\Models\HoraTrabajo;
 
 test('Model HoraTrabajo tiene atributos fillable esperados', function () {
-    $model = new HoraTrabajo();
+    $model = new HoraTrabajo;
 
     $fillable = $model->getFillable();
 

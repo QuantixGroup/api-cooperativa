@@ -17,6 +17,7 @@ class CreatePagosMensualesTable extends Migration
             $table->enum('estado', ['pendiente', 'aceptado', 'rechazado'])->default('pendiente');
             $table->integer('mes')->nullable();
             $table->integer('anio')->nullable();
+            $table->text('observacion')->nullable();
             $table->timestamps();
             $table->index(['mes', 'anio']);
         });

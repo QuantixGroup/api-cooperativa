@@ -1,13 +1,9 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\HoraTrabajoController;
 use App\Http\Controllers\ComprobantePagoController;
+use App\Http\Controllers\HoraTrabajoController;
 use App\Http\Middleware\AutenticacionDesdeApiUsuarios;
-
-
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,4 +26,3 @@ Route::middleware([AutenticacionDesdeApiUsuarios::class])->group(function () {
 Route::get('/recibos/{cedula}', [ComprobantePagoController::class, 'ObtenerRecibosPorCedula']);
 Route::put('/recibos/{idPago}', [ComprobantePagoController::class, 'ActualizarEstadoRecibo']);
 Route::get('/recibos/{idPago}/pdf', [ComprobantePagoController::class, 'ObtenerPdfRecibo']);
-

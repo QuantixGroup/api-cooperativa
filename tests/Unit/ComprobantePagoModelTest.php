@@ -3,7 +3,7 @@
 use App\Models\ComprobantePago;
 
 test('Model ComprobantePago tiene tabla, fillable y casts esperados', function () {
-    $model = new ComprobantePago();
+    $model = new ComprobantePago;
 
     expect($model->getTable())->toBe('pagos_mensuales');
 
