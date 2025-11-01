@@ -14,19 +14,19 @@
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 $projectRoot = dirname(__DIR__);
-$testsMigrations = $projectRoot . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'migrations';
-$dest = $projectRoot . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migrations';
+$testsMigrations = $projectRoot.DIRECTORY_SEPARATOR.'tests'.DIRECTORY_SEPARATOR.'migrations';
+$dest = $projectRoot.DIRECTORY_SEPARATOR.'database'.DIRECTORY_SEPARATOR.'migrations';
 
-$trackingFile = $projectRoot . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'testing_migrations.lst';
+$trackingFile = $projectRoot.DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'framework'.DIRECTORY_SEPARATOR.'testing_migrations.lst';
 @unlink($trackingFile);
 
 if (is_dir($testsMigrations)) {
-    foreach (glob($testsMigrations . '/*.php') as $file) {
+    foreach (glob($testsMigrations.'/*.php') as $file) {
         $basename = basename($file);
-        $target = $dest . DIRECTORY_SEPARATOR . $basename;
-        if (!file_exists($target)) {
+        $target = $dest.DIRECTORY_SEPARATOR.$basename;
+        if (! file_exists($target)) {
             copy($file, $target);
-            file_put_contents($trackingFile, $target . PHP_EOL, FILE_APPEND);
+            file_put_contents($trackingFile, $target.PHP_EOL, FILE_APPEND);
         }
     }
 }

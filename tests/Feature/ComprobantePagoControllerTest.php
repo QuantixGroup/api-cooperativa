@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\ComprobantePagoController;
 use App\Models\ComprobantePago;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 test('insertar comprobante requiere cedula', function () {
-    $controller = new ComprobantePagoController();
+    $controller = new ComprobantePagoController;
     $request = Request::create('/', 'POST', ['monto' => 100, 'fecha_comprobante' => '2025-01-01']);
 
     $response = $controller->InsertarComprobante($request);
@@ -15,7 +15,7 @@ test('insertar comprobante requiere cedula', function () {
 });
 
 test('insertar comprobante crea registro y devuelve 201', function () {
-    $controller = new ComprobantePagoController();
+    $controller = new ComprobantePagoController;
     $request = Request::create('/', 'POST', ['monto' => 1500, 'fecha_comprobante' => '2025-01-02']);
     $request->attributes->set('cedula', 123456789);
     if (DB::getDriverName() === 'mysql') {
@@ -42,7 +42,7 @@ test('obtener recibos por cedula devuelve lista', function () {
         'archivo_comprobante' => null,
         'estado' => 'pendiente',
         'mes' => 10,
-        'anio' => 2025
+        'anio' => 2025,
     ]);
 
     ComprobantePago::create([
@@ -52,14 +52,14 @@ test('obtener recibos por cedula devuelve lista', function () {
         'archivo_comprobante' => null,
         'estado' => 'pendiente',
         'mes' => 11,
-        'anio' => 2025
+        'anio' => 2025,
     ]);
 
     if (DB::getDriverName() === 'mysql') {
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 
-    $controller = new ComprobantePagoController();
+    $controller = new ComprobantePagoController;
 
     $response = $controller->ObtenerRecibosPorCedula(111111111);
 

@@ -11,7 +11,7 @@ class HoraTrabajoController extends Controller
     public function ObtenerHoras(Request $request)
     {
         $cedula = $request->attributes->get('cedula');
-        if (!$cedula) {
+        if (! $cedula) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
         $horas = HoraTrabajo::where('cedula', $cedula)
@@ -24,11 +24,11 @@ class HoraTrabajoController extends Controller
     public function InsertarHoras(Request $request)
     {
         $cedula = $request->attributes->get('cedula');
-        if (!$cedula) {
+        if (! $cedula) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        if ($request->has('horas') && !$request->has('conteo_de_horas')) {
+        if ($request->has('horas') && ! $request->has('conteo_de_horas')) {
             $request->merge(['conteo_de_horas' => intval($request->input('horas'))]);
         }
 

@@ -2,18 +2,20 @@
 
 namespace Database\Seeders;
 
+use App\Models\ComprobantePago;
 use Illuminate\Database\Seeder;
-use App\Models\ReciboPago;
 
 class ReciboPagoSeeder extends Seeder
 {
     public function run()
     {
-        ReciboPago::create([
-            'usuario_id' => 1,
+        ComprobantePago::create([
+            'cedula' => 123456789,
             'monto' => 100.50,
-            'fecha_pago' => now(),
-            'estado' => 'pagado',
+            'fecha_comprobante' => now(),
+            'estado' => 'pendiente',
+            'mes' => 11,
+            'anio' => 2025,
         ]);
     }
 }
