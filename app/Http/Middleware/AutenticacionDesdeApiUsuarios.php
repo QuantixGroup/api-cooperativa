@@ -27,18 +27,18 @@ class AutenticacionDesdeApiUsuarios
             return response()->json(['error' => 'Not authenticated'], 401);
         }
 
-        $apiAuthUrl = env('API_AUTH_URL');
+        $apiAuthUrl = config('services.api_auth_url', env('API_AUTH_URL'));
         if (empty($apiAuthUrl)) {
             Log::error('AutenticacionDesdeApiUsuarios: API_AUTH_URL no está configurada');
 
             return response()->json(['error' => 'Authentication service not configured'], 500);
         }
         $parsed = parse_url($apiAuthUrl);
-        if (! isset($parsed['scheme'])) {
-            $apiAuthUrl = 'http://'.ltrim($apiAuthUrl, '/');
+        if (!isset($parsed['scheme'])) {
+            $apiAuthUrl = 'http://' . ltrim($apiAuthUrl, '/');
         }
 
-        $validateUrl = rtrim($apiAuthUrl, '/').'/api/validate';
+        $validateUrl = rtrim($apiAuthUrl, '/') . '/api/validate';
 
         try {
             $validacion = Http::withHeaders([
@@ -54,7 +54,7 @@ class AutenticacionDesdeApiUsuarios
             return response()->json(['error' => 'Authentication validation error'], 500);
         }
 
-        if (! $validacion->successful()) {
+        if (!$validacion->successful()) {
             $status = $validacion->status() ?: 401;
             $body = $validacion->json();
             $message = is_array($body) && isset($body['error']) ? $body['error'] : 'Invalid token';
