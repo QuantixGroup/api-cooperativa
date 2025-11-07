@@ -14,6 +14,8 @@ return [
     |
     */
 
+    'api_auth_url' => env('API_AUTH_URL', 'http://127.0.0.1:8000'),
+
     'usuarios' => [
         'me' => env('USUARIOS_API_ME'),
     ],
