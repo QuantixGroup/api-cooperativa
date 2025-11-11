@@ -1,25 +1,20 @@
-version : "3.5"
+version: "3.8"
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql 
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=root 
-      - MYSQL_DATABASE=laravel
-    volumes:
-      - "./mysql:/var/lib/mysql"
-  api:
-    depends_on:  
-      - mysql
-    image: ggmartinez/laravel:php-82
-    container_name: api 
-    ports:
-      - "8000:8000"
-    volumes:
-      - "./:/app"
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: proyecto/api-cooperativa:dev
+        container_name: api-cooperativa_app
+        env_file:
+            - .env
+        ports:
+            - "8001:8000"
+        volumes:
+            - ./:/var/www/html:cached
+        networks:
+            - backend
 
-
-
-
+networks:
+    backend:
+        driver: bridge
